@@ -21,7 +21,7 @@ async function loginAsLabsAdmin() {
 }
 
 /* ---------- Constants that describe the fixtures ---------- */
-const LABS_COMPANY_ID = 5;
+const LABS_COMPANY_ID = 3;
 
 /* ---------- Tests ---------- */
 

@@ -64,10 +64,27 @@ jobs:
             -d '{"email":"admin@assetly.local","password":"admin123"}' \
             | grep -o '"token":"[^"]*"' | cut -d'"' -f4)
 
-          curl -s -X POST http://localhost:4000/api/admin/users \
+          if [ -z "$TOKEN" ]; then
+            echo "Failed to obtain admin token"
+            cat /tmp/api.log
+            exit 1
+          fi
+
+          RESPONSE=$(curl -s -w "\n%{http_code}" -X POST http://localhost:4000/api/admin/users \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer $TOKEN" \
-            -d '{"email":"labs.admin@assetly.local","password":"test123","name":"Labs Admin","role":"company_admin","company_id":5}'
+            -d '{"email":"labs.admin@assetly.local","password":"test123","name":"Labs Admin","role":"company_admin","company_id":3}')
+
+          STATUS=$(echo "$RESPONSE" | tail -n1)
+          BODY=$(echo "$RESPONSE" | sed '$d')
+
+          if [ "$STATUS" != "200" ]; then
+            echo "Failed to create labs admin: HTTP $STATUS"
+            echo "$BODY"
+            exit 1
+          fi
+
+          echo "Labs admin created: $BODY"
 
       - name: Run tests
         env:
