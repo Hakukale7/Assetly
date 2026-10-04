@@ -44,6 +44,7 @@ jobs:
           JWT_SECRET: ci-test-secret
           PORT: 4000
           NODE_ENV: development
+          SEED_ADMIN_PASSWORD: admin123
         run: |
           node src/server.js > /tmp/api.log 2>&1 &
           for i in $(seq 1 30); do
@@ -71,6 +72,7 @@ jobs:
       - name: Run tests
         env:
           TEST_API_URL: http://localhost:4000
+          TEST_ADMIN_PASSWORD: admin123
         run: node --test test/
 
       - name: Show API log on failure
